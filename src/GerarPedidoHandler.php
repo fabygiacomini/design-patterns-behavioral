@@ -4,10 +4,20 @@
 namespace DesignPatterns\Behavioral;
 
 
+use DesignPatterns\Behavioral\AcoesAoGerarPedido\AcaoAposGerarPedido;
+
 class GerarPedidoHandler
 {
-    public function __construct(/*PedidosRepository, MailService*/)
+    /** @var AcaoAposGerarPedido[]  */
+    private array $acoesAposGerarPedido = [];
+
+    public function __construct(/*PedidosRepository, MailService, etc*/)
     {
+    }
+
+    public function adicionarAcaoAposGerarPedido(AcaoAposGerarPedido $acaoAposGerarPedido)
+    {
+        $this->acoesAposGerarPedido[] = $acaoAposGerarPedido;
     }
 
     public function execute(GerarPedido $gerarPedido)
@@ -21,9 +31,9 @@ class GerarPedidoHandler
         $pedido->nomeCliente = $gerarPedido->getNomeCliente();
         $pedido->orcamento = $orcamento;
 
-        // PedidosRepository
-        echo "Cria pedido no banco de dados" . PHP_EOL;
-        // MailService
-        echo "Envia e-mail para cliente" . PHP_EOL;
+        /* Observer Pattern */
+        foreach ($this->acoesAposGerarPedido as $acaoAposGerarPedido) {
+            $acaoAposGerarPedido->executaAcao($pedido);
+        }
     }
 }
